@@ -23,18 +23,18 @@ html, body {
     width: 100vw;
     height: 100vh;
     object-fit: fill; /* stretches video */
-    z-index: 0;       /* ensure behind everything */
+    z-index: 0;       /* behind everything */
 }
 
-/* overlay */
+/* full black overlay with CLICK text */
 #overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.1); /* semi-transparent black */
-    z-index: 9999;      /* very high to ensure above everything */
+    background: black; /* fully black */
+    z-index: 9999;     /* above everything */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -92,7 +92,7 @@ overlay.addEventListener('click', () => {
     video.muted = false;  // unmute video
     video.play();         // start video + audio
 
-    // fade out overlay
+    // fade out overlay smoothly
     overlay.style.opacity = 0;
     setTimeout(() => {
         overlay.style.display = 'none';
