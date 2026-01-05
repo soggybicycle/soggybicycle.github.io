@@ -10,32 +10,33 @@ html, body {
     padding: 0;
     width: 100%;
     height: 100%;
+    background: #0f0f0f;
     overflow: hidden;
     font-family: Comic Sans MS, Comic Sans, cursive;
-    color: white;
+    color: #eaeaea;
 }
 
-/* Animated topographic background */
-body {
-    background:
-        repeating-radial-gradient(
-            circle at center,
-            rgba(255,255,255,0.08) 0px,
-            rgba(255,255,255,0.08) 2px,
-            rgba(0,0,0,0) 6px,
-            rgba(0,0,0,0) 12px
-        ),
-        linear-gradient(120deg, #0f2027, #203a43, #2c5364);
-    background-size: 200% 200%;
-    animation: topoMove 20s linear infinite;
+/* SVG background wrapper */
+#bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
 }
 
-@keyframes topoMove {
-    0% { background-position: 0% 0%; }
-    100% { background-position: 100% 100%; }
+/* Animate the contour lines slowly */
+@keyframes drift {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(-40px, -30px); }
+    100% { transform: translate(0, 0); }
 }
 
-/* Center title */
+svg {
+    width: 120%;
+    height: 120%;
+    animation: drift 40s ease-in-out infinite;
+}
+
+/* Title */
 .title {
     position: absolute;
     top: 20px;
@@ -56,11 +57,28 @@ body {
 </head>
 
 <body>
-    <div class="title">skolus</div>
 
-    <div class="about">
-        <strong>about me:</strong><br>
-        - im skolus
-    </div>
+<div id="bg">
+<svg viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
+    <g fill="none" stroke="#6b6b6b" stroke-width="1.5" opacity="0.9">
+        <path d="M100 200 C200 100 400 100 500 200 C600 300 400 400 300 350 C200 300 100 300 100 200 Z"/>
+        <path d="M130 230 C230 150 420 140 500 230 C570 300 430 360 330 330 C230 300 150 290 130 230 Z"/>
+        <path d="M600 150 C750 100 900 180 850 300 C800 420 600 400 560 300 C530 230 560 180 600 150 Z"/>
+        <path d="M630 180 C740 150 860 210 820 290 C780 360 640 350 600 290 C570 240 590 200 630 180 Z"/>
+        <path d="M300 600 C400 520 600 540 650 650 C700 760 520 820 400 780 C300 740 250 650 300 600 Z"/>
+        <path d="M330 630 C420 580 570 600 610 660 C650 720 520 770 420 740 C340 710 300 660 330 630 Z"/>
+        <path d="M700 650 C820 620 920 700 880 820 C840 930 700 920 640 820 C600 740 640 680 700 650 Z"/>
+        <path d="M720 680 C800 660 880 720 850 800 C820 870 720 860 680 800 C650 740 680 700 720 680 Z"/>
+    </g>
+</svg>
+</div>
+
+<div class="title">skolus</div>
+
+<div class="about">
+    <strong>about me:</strong><br>
+    - im skolus
+</div>
+
 </body>
 </html>
