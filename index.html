@@ -24,6 +24,7 @@ html, body {
     height: 100%;
     object-fit: cover;
     z-index: -1; /* behind content */
+    filter: brightness(0.7); /* slightly darken for text readability */
 }
 
 /* title */
@@ -43,13 +44,30 @@ html, body {
     font-size: 20px;
     line-height: 1.6;
 }
+
+/* play audio button */
+#play-audio-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid white;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+#play-audio-btn:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
 </style>
 </head>
 
 <body>
 
 <!-- Video background -->
-<video autoplay muted loop id="bg-video">
+<video id="bg-video" autoplay loop>
     <source src="assets/bg.mp4" type="video/mp4">
     Your browser does not support the video tag.
 </video>
@@ -60,6 +78,20 @@ html, body {
     <strong>about me:</strong><br>
     - im skolus
 </div>
+
+<!-- Play audio button -->
+<button id="play-audio-btn">Play Audio</button>
+
+<script>
+const video = document.getElementById('bg-video');
+const btn = document.getElementById('play-audio-btn');
+
+btn.addEventListener('click', () => {
+    video.muted = false; // unmute video
+    video.play();        // start video/audio
+    btn.style.display = 'none'; // hide button after click
+});
+</script>
 
 </body>
 </html>
