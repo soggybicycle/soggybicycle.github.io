@@ -10,17 +10,20 @@ html, body {
     padding: 0;
     width: 100%;
     height: 100%;
-    background: black;
     overflow: hidden;
     font-family: Comic Sans MS, Comic Sans, cursive;
     color: white;
 }
 
-/* particles container */
-#particles-js {
+/* full-screen video background */
+#bg-video {
     position: fixed;
-    inset: 0;
-    z-index: -1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1; /* behind content */
 }
 
 /* title */
@@ -45,7 +48,11 @@ html, body {
 
 <body>
 
-<div id="particles-js"></div>
+<!-- Video background -->
+<video autoplay muted loop id="bg-video">
+    <source src="assets/bg.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
 
 <div class="title">skolus</div>
 
@@ -53,55 +60,6 @@ html, body {
     <strong>about me:</strong><br>
     - im skolus
 </div>
-
-<!-- particles.js library -->
-<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-
-<script>
-particlesJS("particles-js", {
-  particles: {
-    number: {
-      value: 120,
-      density: { enable: true, value_area: 800 }
-    },
-    color: { value: "#ffffff" },
-    shape: { type: "circle" },
-    opacity: {
-      value: 0.6,
-      random: false
-    },
-    size: {
-      value: 2,
-      random: true
-    },
-    line_linked: {
-      enable: true,
-      distance: 150,
-      color: "#ffffff",
-      opacity: 0.4,
-      width: 1
-    },
-    move: {
-      enable: true,
-      speed: 1.5,
-      direction: "none",
-      out_mode: "out"
-    }
-  },
-  interactivity: {
-    detect_on: "canvas",
-    events: {
-      onhover: { enable: true, mode: "repulse" },
-      onclick: { enable: true, mode: "push" }
-    },
-    modes: {
-      repulse: { distance: 100 },
-      push: { particles_nb: 4 }
-    }
-  },
-  retina_detect: true
-});
-</script>
 
 </body>
 </html>
