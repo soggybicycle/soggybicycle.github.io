@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>skolus</title>
 
-<!-- Web font for consistent look -->
 <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
@@ -18,96 +17,86 @@ html, body {
     color: white;
 }
 
-/* full-screen video background */
+/* video background */
 #bg-video {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    object-fit: fill; /* stretches video to screen */
+    object-fit: fill;
     z-index: 0;
 }
 
-/* overlay for CLICK */
+/* overlay */
 #overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    inset: 0;
     background: black;
     z-index: 9999;
     display: flex;
-    justify-content: center;
     align-items: center;
-    cursor: pointer;
-    font-size: 12vw;  /* responsive font */
+    justify-content: center;
+    font-size: 12vw;
     font-weight: bold;
-    color: white;
+    cursor: pointer;
     transition: opacity 0.5s ease;
 }
 
-/* text boxes with half-opacity black background and rounded corners */
+/* text boxes */
 .title, .about {
-    display: inline-block;
     background: rgba(0, 0, 0, 0.5);
     padding: 1rem 2rem;
     border-radius: 12px;
     max-width: 90vw;
-    word-wrap: break-word;
 }
 
-/* title specific */
 .title {
     position: absolute;
     top: 5%;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 10vw; /* responsive size */
-    text-align: center;
+    font-size: 10vw;
     z-index: 1;
 }
 
-/* about specific */
 .about {
     position: absolute;
     top: 20%;
     left: 5%;
-    font-size: 4vw; /* responsive size */
-    line-height: 1.4;
+    font-size: 4vw;
     z-index: 1;
 }
 
-/* optional play audio button for extra control */
-#play-audio-btn {
-    position: absolute;
-    bottom: 5%;
-    right: 5%;
-    padding: 0.5rem 1rem;
-    font-size: 3vw;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid white;
-    color: white;
-    cursor: pointer;
-    border-radius: 5px;
+/* volume slider container */
+#volume-container {
+    position: fixed;
+    right: 2%;
+    top: 50%;
+    transform: translateY(-50%);
     z-index: 2;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 12px;
+    display: none;
 }
-#play-audio-btn:hover {
-    background: rgba(255, 255, 255, 0.4);
+
+/* vertical volume slider */
+#volume-slider {
+    writing-mode: bt-lr;
+    -webkit-appearance: slider-vertical;
+    width: 8px;
+    height: 150px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- Video background -->
 <video id="bg-video" playsinline muted loop>
     <source src="assets/bg.mp4" type="video/mp4">
-    Your browser does not support the video tag.
 </video>
 
-<!-- Overlay with CLICK -->
 <div id="overlay">CLICK</div>
 
 <div class="title">skolus</div>
@@ -117,20 +106,30 @@ html, body {
     - im skolus
 </div>
 
+<!-- Volume slider -->
+<div id="volume-container">
+    <input id="volume-slider" type="range" min="0" max="100" value="100">
+</div>
+
 <script>
 const video = document.getElementById('bg-video');
 const overlay = document.getElementById('overlay');
+const slider = document.getElementById('volume-slider');
+const volumeBox = document.getElementById('volume-container');
 
 overlay.addEventListener('click', () => {
-    // unmute and play video on user interaction (required on mobile)
     video.muted = false;
+    video.volume = 1;
     video.play();
 
-    // fade out overlay
     overlay.style.opacity = 0;
-    setTimeout(() => {
-        overlay.style.display = 'none';
-    }, 500);
+    setTimeout(() => overlay.style.display = 'none', 500);
+
+    volumeBox.style.display = 'block';
+});
+
+slider.addEventListener('input', () => {
+    video.volume = slider.value / 100;
 });
 </script>
 
