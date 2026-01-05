@@ -1,10 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Skolus</title>
+<meta charset="UTF-8">
+<title>skolus</title>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: Comic Sans MS, Comic Sans, cursive;
+    color: white;
+}
+
+/* Animated topographic background */
+body {
+    background:
+        repeating-radial-gradient(
+            circle at center,
+            rgba(255,255,255,0.08) 0px,
+            rgba(255,255,255,0.08) 2px,
+            rgba(0,0,0,0) 6px,
+            rgba(0,0,0,0) 12px
+        ),
+        linear-gradient(120deg, #0f2027, #203a43, #2c5364);
+    background-size: 200% 200%;
+    animation: topoMove 20s linear infinite;
+}
+
+@keyframes topoMove {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+}
+
+/* Center title */
+.title {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    text-align: center;
+    font-size: 64px;
+}
+
+/* About section */
+.about {
+    position: absolute;
+    top: 120px;
+    left: 40px;
+    font-size: 20px;
+    line-height: 1.6;
+}
+</style>
 </head>
+
 <body>
-    <h1>Skolus</h1>
-    <p>site,,,,,,</p>
+    <div class="title">skolus</div>
+
+    <div class="about">
+        <strong>about me:</strong><br>
+        - im skolus
+    </div>
 </body>
 </html>
