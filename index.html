@@ -1,206 +1,278 @@
 <!DOCTYPE html>
 <html>
 <head>
-      <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
-<meta charset="UTF-8">
-<title>website</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <meta charset="UTF-8">
+    <title>website</title>
 
-<style>
-body{
-    margin:0;
-    background:black;
-    font-family:sans-serif;
-    height:100vh;
-    overflow-x:hidden;
-}
+    <style>
+        body {
+            margin: 0;
+            background: black;
+            font-family: sans-serif;
+            height: 100vh;
+            overflow-x: hidden;
+        }
 
-#wave-bg{
-    position:fixed;
-    inset:0;
-    z-index:0;
-}
-#wave-bg svg{
-    width:100%;
-    height:100%;
-}
-.wave-surface{
-    fill:#0a0a0a;
-    filter:url(#waveFilter);
-}
+        #wave-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
 
-#edit-text{
-    position:fixed;
-    top:10px;
-    left:50%;
-    transform:translateX(-50%);
-    color:white;
-    font-size:14px;
-    opacity:0.8;
-    z-index:4;
-    text-align:center;
-}
+        #wave-bg svg {
+            width: 100%;
+            height: 100%;
+        }
 
-#textbox-area{
-    position:fixed;
-    top:30px;
-    left:50%;
-    transform:translateX(-50%);
-    width:420px;
-    padding:20px;
-    border-radius:16px;
+        .wave-surface {
+            fill: #0a0a0a;
+            filter: url(#waveFilter);
+        }
 
-    backdrop-filter:blur(15px);
-    background:rgba(255,255,255,0.08);
-    border:1px solid rgba(255,255,255,0.25);
+        #edit-text {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 14px;
+            opacity: 0.8;
+            z-index: 4;
+            text-align: center;
+        }
 
-    box-shadow:0 8px 40px rgba(0,0,0,0.7);
-    z-index:3;
+        #textbox-area {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 420px;
+            padding: 20px;
+            border-radius: 16px;
+            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.7);
+            z-index: 3;
+            color: white;
+            text-align: center;
+            font-size: 22px;
+            cursor: pointer;
+        }
 
-    color:white;
-    text-align:center;
-    font-size:22px;
-    cursor:pointer;
-}
+        .glass-ui {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            color: white;
+            cursor: pointer;
+            padding: 10px 16px;
+            font-size: 16px;
+            z-index: 4;
+            transition: 0.1s;
+        }
 
-#textbox-area, #edit-text {
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-}
+        #play-button { position: fixed; top: 20px; left: 20px; }
+        #dark-mode-button { position: fixed; top: 70px; left: 20px; }
+        #free-button { position: fixed; top: 120px; left: 20px; color: #00ff00; }
+        #cowardButton { position: fixed; top: 170px; left: 20px; }
 
-#play-button {
-    position:fixed;
-    top:20px;
-    left:20px;
-    padding:10px 16px;
-    font-size:16px;
-    background:rgba(255,255,255,0.1);
-    border:1px solid rgba(255,255,255,0.25);
-    border-radius:10px;
-    backdrop-filter:blur(10px);
-    color:white;
-    cursor:pointer;
-    z-index:4;
-}
+        #anonymous-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            width: 320px;
+        }
 
-#letter-l {
-    display:inline-block;
-    width: 0.6ch;
-    transition: width 3s ease, opacity 3s ease;
-    overflow: hidden;
-    vertical-align: bottom;
-    opacity: 1;
-}
+        #secretInput {
+            width: 100%;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            padding: 10px;
+            outline: none;
+            resize: none;
+        }
 
-#letter-l.hide {
-    width: 0;
-    opacity: 0;
-}
+        #void-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: black;
+            z-index: 9999;
+            cursor: crosshair;
+        }
 
-#image-stage{
-    position:fixed;
-    inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:2;
-    pointer-events:none;
-}
+        #letter-l {
+            display: inline-block;
+            width: 0.6ch;
+            transition: width 3s ease, opacity 3s ease;
+            overflow: hidden;
+            vertical-align: bottom;
+            opacity: 1;
+        }
 
-#scroll-image{
-    max-width:70vw;
-    pointer-events:auto;
-}
-</style>
+        #letter-l.hide { width: 0; opacity: 0; }
+
+        #image-stage {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        #scroll-image {
+            max-width: 70vw;
+            pointer-events: auto;
+        }
+    </style>
 </head>
 <body>
 
 <div id="wave-bg">
-<svg viewBox="0 0 1000 600" preserveAspectRatio="none">
-<defs>
-<filter id="waveFilter">
-<feTurbulence type="turbulence" baseFrequency="0.008 0.02" numOctaves="3" seed="2" result="noise">
-<animate attributeName="baseFrequency" values="0.008 0.02;0.01 0.025;0.008 0.02" dur="20s" repeatCount="indefinite"/>
-</feTurbulence>
-<feDisplacementMap in="SourceGraphic" in2="noise" scale="120" xChannelSelector="R" yChannelSelector="G"/>
-</filter>
-</defs>
-<rect width="100%" height="100%" class="wave-surface"/>
-</svg>
+    <svg viewBox="0 0 1000 600" preserveAspectRatio="none">
+        <defs>
+            <filter id="waveFilter">
+                <feTurbulence type="turbulence" baseFrequency="0.008 0.02" numOctaves="3" seed="2" result="noise">
+                    <animate attributeName="baseFrequency" values="0.008 0.02;0.01 0.025;0.008 0.02" dur="20s" repeatCount="indefinite" />
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="120" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+        </defs>
+        <rect width="100%" height="100%" class="wave-surface" />
+    </svg>
 </div>
 
 <div id="edit-text">double click to edit</div>
-
 <div id="textbox-area">meow</div>
 
-<button id="play-button">P<span id="letter-l">l</span>ay Sound</button>
+<button id="play-button" class="glass-ui">P<span id="letter-l">l</span>ay Sound</button>
+<button id="dark-mode-button" class="glass-ui" onclick="document.getElementById('void-overlay').style.display='block'">Dark Mode</button>
+<button id="free-button" class="glass-ui" onclick="spawnChaos()">Free</button>
+<button id="cowardButton" class="glass-ui" onmouseover="teleport()">Info</button>
+
+<div id="void-overlay" onclick="this.style.display='none'"></div>
+
+<div id="anonymous-box">
+    <label>tell me anything! (anonymous)</label>
+    <textarea id="secretInput" autocomplete="off" placeholder="Write something..."></textarea>
+    <button class="glass-ui" onclick="sendToVoid()">Send</button>
+    <p id="errorMsg" style="color: #ff4444; display: none; font-size: 12px; font-family: monospace;">[!] Error: CSRF Token Validation Failed. Session timed out.</p>
+</div>
 
 <div id="image-stage">
     <img id="scroll-image" src="test5.png">
 </div>
 
 <script>
-const img = document.getElementById("scroll-image")
-const panel = document.getElementById("textbox-area")
-const playButton = document.getElementById("play-button")
-const audio = new Audio("test6.mp3")
-const letterL = document.getElementById("letter-l")
+    const img = document.getElementById("scroll-image");
+    const panel = document.getElementById("textbox-area");
+    const playButton = document.getElementById("play-button");
+    const audio = new Audio("test6.mp3");
+    const letterL = document.getElementById("letter-l");
 
-let start, end, maxScroll
-
-function calculate(){
-    const imageHeight = img.offsetHeight
-    const panelRect = panel.getBoundingClientRect()
-    start = window.innerHeight
-    end = panelRect.bottom + 20 - (window.innerHeight/2 - imageHeight/2)
-    maxScroll = start - end
-    document.body.style.height = (window.innerHeight + maxScroll) + "px"
-    update()
-}
-
-function update(){
-    const progress = Math.min(window.scrollY / maxScroll,1)
-    const y = start + (end - start) * progress
-    img.style.transform = `translateY(${y}px)`
-}
-
-window.addEventListener("scroll",update)
-window.addEventListener("resize",calculate)
-
-img.onload = () => {
-    calculate()
-    window.scrollTo(0,0)
-}
-
-playButton.addEventListener("click", ()=>{
-    audio.currentTime = 0
-    audio.play()
-
-    letterL.classList.add("hide")
-})
-
-panel.addEventListener("dblclick", () => {
-    const video = document.createElement("video");
-    video.src = "test7.mp4";
-    video.style.position = "fixed";
-    video.style.top = "50%";
-    video.style.left = "50%";
-    video.style.transform = "translate(-50%, -50%)";
-    video.style.zIndex = "5";
-    video.style.maxWidth = "90vw";
-    video.style.maxHeight = "90vh";
-    video.autoplay = true;
-    video.controls = false;
-    video.loop = false;
-    video.muted = false;
-    video.style.pointerEvents = "none";
-    document.body.appendChild(video);
-
-    video.onended = () => {
-        document.body.removeChild(video);
+    function spawnChaos() {
+        for (let i = 0; i < 101; i++) {
+            const left = Math.floor(Math.random() * window.screen.width);
+            const top = Math.floor(Math.random() * window.screen.height);
+            
+            const win = window.open("", `win${i}`, `width=200,height=100,left=${left},top=${top}`);
+            if (win) {
+                win.document.write("<body style='background:black; color:white; display:flex; align-items:center; justify-content:center; font-family:sans-serif;'><h1>FREE</h1></body>");
+            }
+        }
     }
-});
+
+    function sendToVoid() {
+        const input = document.getElementById('secretInput');
+        const error = document.getElementById('errorMsg');
+        input.value = "";
+        input.blur();
+        error.style.display = 'block';
+        setTimeout(() => { error.style.display = 'none'; }, 3000);
+    }
+
+    document.getElementById('secretInput').addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'z') e.preventDefault();
+    });
+
+    let currentCorner = 0;
+    function teleport() {
+        const btn = document.getElementById('cowardButton');
+        const corners = [
+            ['20px', '170px'], 
+            ['calc(100% - 120px)', '20px'], 
+            ['calc(100% - 120px)', 'calc(100% - 50px)'], 
+            ['20px', 'calc(100% - 50px)']
+        ];
+        currentCorner = (currentCorner + 1) % corners.length;
+        btn.style.left = corners[currentCorner][0];
+        btn.style.top = corners[currentCorner][1];
+    }
+
+    let start, end, maxScroll;
+    function calculate() {
+        const imageHeight = img.offsetHeight;
+        const panelRect = panel.getBoundingClientRect();
+        start = window.innerHeight;
+        end = panelRect.bottom + 20 - (window.innerHeight / 2 - imageHeight / 2);
+        maxScroll = start - end;
+        document.body.style.height = (window.innerHeight + maxScroll) + "px";
+        update();
+    }
+
+    function update() {
+        const progress = Math.min(window.scrollY / maxScroll, 1);
+        const y = start + (end - start) * progress;
+        img.style.transform = `translateY(${y}px)`;
+    }
+
+    window.addEventListener("scroll", update);
+    window.addEventListener("resize", calculate);
+
+    img.onload = () => {
+        calculate();
+        window.scrollTo(0, 0);
+    }
+
+    playButton.addEventListener("click", () => {
+        audio.currentTime = 0;
+        audio.play();
+        letterL.classList.add("hide");
+    });
+
+    panel.addEventListener("dblclick", () => {
+        const video = document.createElement("video");
+        video.src = "test7.mp4";
+        video.style.position = "fixed";
+        video.style.top = "50%";
+        video.style.left = "50%";
+        video.style.transform = "translate(-50%, -50%)";
+        video.style.zIndex = "5";
+        video.style.maxWidth = "90vw";
+        video.style.maxHeight = "90vh";
+        video.autoplay = true;
+        video.style.pointerEvents = "none";
+        document.body.appendChild(video);
+        video.onended = () => { document.body.removeChild(video); }
+    });
 </script>
 
 </body>
