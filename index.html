@@ -163,6 +163,42 @@
       color: var(--accent);
     }
 
+    /* ── Clock ── */
+    .clock-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      margin-bottom: 2.5rem;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.7;
+      animation: pulse 2.4s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.7; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.8); }
+    }
+
+    #clock {
+      font-size: 0.85rem;
+      color: var(--muted);
+      letter-spacing: 0.01em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #tz-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      opacity: 0.6;
+    }
+
     /* ── Footer ── */
     footer {
       margin-top: 2.5rem;
@@ -170,7 +206,14 @@
       color: var(--muted);
     }
 
-    @media (prefers-reduced-motion: reduce) {
+    #j-hint {
+      opacity: 0.4;
+      font-style: italic;
+      transition: opacity 0.3s;
+    }
+    #j-hint:hover { opacity: 0.7; }
+
+
       .project { transition: none; }
     }
   </style>
@@ -202,6 +245,12 @@
       </a>
     </div>
 
+    <p class="section-label">currently</p>
+    <div class="clock-row">
+      <div class="status-dot"></div>
+      <span id="clock">it's currently -- for me</span>
+    </div>
+
     <p class="section-label">projects</p>
 
     <div class="projects">
@@ -220,13 +269,40 @@
     </div>
 
     <footer>
-      &copy; 2026 skolus
+      &copy; 2026 skolus &nbsp;·&nbsp; <span id="j-hint">psst.. press J</span>
     </footer>
   </div>
 </main>
 
 <script>
-  // ── Rain ──
+  // ── Sydney Clock ──
+  function updateClock() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-AU', {
+      timeZone: 'Australia/Sydney',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+    const s = now.toLocaleString('en-AU', { timeZone: 'Australia/Sydney', timeZoneName: 'shortOffset' });
+    const m = s.match(/GMT([+-])(\d+)(?::(\d+))?/);
+    const offsetMin = m ? (parseInt(m[2]) * 60 + parseInt(m[3] || 0)) * (m[1] === '+' ? 1 : -1) : 600;
+    const tz = offsetMin === 660 ? 'AEDT' : 'AEST';
+    document.getElementById('clock').textContent = `it's currently ${timeStr} (${tz}) for me`;
+  }
+
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // ── Scroll → Rain Speed ──
+  const BASE_SPEED_MIN = 10, BASE_SPEED_MAX = 17;
+  let scrollSpeedMult = 1;
+
+  window.addEventListener('wheel', (e) => {
+    scrollSpeedMult = Math.max(1, Math.min(6, scrollSpeedMult + (e.deltaY > 0 ? 0.4 : -0.4)));
+  }, { passive: true });
+
+
   const canvas = document.getElementById('rain');
   const ctx = canvas.getContext('2d');
   let drops = [];
@@ -254,22 +330,67 @@
       speed:   Math.random() * 7 + 10,
       opacity: Math.random() * 0.4 + 0.15,
       width:   Math.random() * 0.8 + 0.4,
+      vx:      0, // lateral displacement velocity
     };
   }
+
+  // ── Rain colour ──
+  let rainColor = null; // null = default
+
+  const hint = document.getElementById('j-hint');
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'j' || e.key === 'J') {
+      const r = Math.floor(Math.random() * 256);
+      const g = Math.floor(Math.random() * 256);
+      const b = Math.floor(Math.random() * 256);
+      rainColor = `${r},${g},${b}`;
+      hint.textContent = 'press K to reset';
+    } else if (e.key === 'k' || e.key === 'K') {
+      rainColor = null;
+      hint.textContent = 'psst.. press J';
+    }
+  });
+
+
+  let mouse = { x: -9999, y: -9999 };
+  window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+  window.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
+
+  const MOUSE_RADIUS = 110;
+  const PUSH_STRENGTH = 6;
+  const RETURN_EASE = 0.08;
 
   function drawRain() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < drops.length; i++) {
       const d = drops[i];
+
+      // Displacement: push drops away from cursor
+      const dx = d.x - mouse.x;
+      const dy = d.y - mouse.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < MOUSE_RADIUS && dist > 0) {
+        const influence = (1 - dist / MOUSE_RADIUS);
+        d.vx += (dx / dist) * influence * PUSH_STRENGTH;
+      }
+
+      // Clamp and ease vx back toward 0
+      d.vx = Math.max(-18, Math.min(18, d.vx));
+      d.vx *= (1 - RETURN_EASE);
+
+      const spd = d.speed * scrollSpeedMult;
+      d.x += spd * 0.18 + d.vx;
+      d.y += spd;
+
+      // Draw with current vx affecting the streak angle
+      const tiltX = d.len * 0.18 + d.vx * 1.5;
       ctx.beginPath();
       ctx.moveTo(d.x, d.y);
-      ctx.lineTo(d.x + d.len * 0.18, d.y + d.len);
-      ctx.strokeStyle = `rgba(160,185,230,${d.opacity})`;
-      ctx.lineWidth   = d.width;
+      ctx.lineTo(d.x + tiltX, d.y + d.len);
+      ctx.strokeStyle = `rgba(${rainColor ?? '160,185,230'},${rainColor ? Math.min(1, d.opacity * 2.2) : d.opacity})`;
+      ctx.lineWidth   = rainColor ? d.width * 2.5 : d.width;
       ctx.stroke();
-
-      d.y += d.speed;
-      d.x += d.speed * 0.18;
 
       if (d.y > canvas.height + d.len || d.x > canvas.width + d.len) {
         drops[i] = newDrop(false);
