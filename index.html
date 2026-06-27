@@ -213,6 +213,33 @@
     }
     #j-hint:hover { opacity: 0.7; }
 
+    #mobile-hint {
+      display: none;
+      position: fixed;
+      bottom: 1.2rem;
+      right: 1.2rem;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      opacity: 0.35;
+      transition: opacity 0.2s;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #mobile-hint:hover, #mobile-hint:active { opacity: 0.75; }
+
+    @media (max-width: 600px) {
+      #j-hint { display: none; }
+      #mobile-hint { display: flex; }
+    }
+
 
       .project { transition: none; }
     }
@@ -273,6 +300,8 @@
     </footer>
   </div>
 </main>
+
+<button id="mobile-hint" aria-label="Randomise rain colour">?</button>
 
 <script>
   // ── Sydney Clock ──
@@ -338,18 +367,30 @@
   let rainColor = null; // null = default
 
   const hint = document.getElementById('j-hint');
+  const mobileBtn = document.getElementById('mobile-hint');
+
+  function randomiseRain() {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    rainColor = `${r},${g},${b}`;
+    hint.textContent = 'press K to reset';
+    mobileBtn.textContent = '↺';
+  }
+
+  function resetRain() {
+    rainColor = null;
+    hint.textContent = 'psst.. press J';
+    mobileBtn.textContent = '?';
+  }
+
+  mobileBtn.addEventListener('click', () => {
+    rainColor ? resetRain() : randomiseRain();
+  });
 
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'j' || e.key === 'J') {
-      const r = Math.floor(Math.random() * 256);
-      const g = Math.floor(Math.random() * 256);
-      const b = Math.floor(Math.random() * 256);
-      rainColor = `${r},${g},${b}`;
-      hint.textContent = 'press K to reset';
-    } else if (e.key === 'k' || e.key === 'K') {
-      rainColor = null;
-      hint.textContent = 'psst.. press J';
-    }
+    if (e.key === 'j' || e.key === 'J') randomiseRain();
+    else if (e.key === 'k' || e.key === 'K') resetRain();
   });
 
 
